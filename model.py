@@ -1,36 +1,42 @@
 import numpy as np
 import cv2
 
-img=cv2.imread('map.jpeg')
 
-factor=1
+img = cv2.imread('map_grid_processed.jpeg',1)
 
-dim = img.shape
+dim=img.shape
+clsize=100
+x=dim[0]//clsize
+y=dim[1]//clsize
 
-grid=np.zeros((int(dim[0])//factor,int(dim[1])//factor))
-np.set_printoptions(suppress=True)
+op=[]
 
+#cv2.imshow('image',img)
+#cv2.waitKey(0)
 
-s_x,s_y=258,94
-
-s_b,s_g,s_r=img[s_x][s_y][0],img[s_x][s_y][1],img[s_x][s_y][2]
-f=0
-
-
-for i in range(dim[0]):
-    for j in range(dim[1]):
-        
-        k=0
-        p_b,p_g,p_r=img[i][j][0],img[i][j][1],img[i][j][2]
-        if(p_b==s_b):
-            k+=1
-        if(p_g==s_g):
-            k+=1
-        if(p_r==s_r):
-            k+=1
-        if(k!=3):
-            f+=1
+cl = int(clsize / 2)
 
 
-print(f)
-np.savetxt('final_matrix',grid,'%5.3d')
+for i in range(x):
+    row=[]
+    for j in range(y):  
+        k=i*clsize+cl
+        j=j*clsize+cl  
+        if(img[k,j,0]==0 and img[k,j,1]==0 and img[k,j,2]==254):
+            row.append(1)
+        else:
+            row.append(0)
+
+    op.append(row)
+ 
+
+f=open("final_matrix","w")
+
+for i in range(x):
+    for j in range(y):
+        f.write(str(op[i][j])+" ")
+    f.write("\n")
+
+f.close() 
+
+
